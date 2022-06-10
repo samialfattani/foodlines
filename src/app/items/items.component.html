@@ -1,0 +1,98 @@
+<h3>
+  items works!
+</h3>
+
+
+<div *ngFor="let cat of categories; let i = index" >
+	<div >Category: <b>{{ cat }}</b></div>
+	<table class="table table-sm  table-hover" id="{{cat}}">
+		<thead class="thead-light">
+			<tr>
+					<th>Barcode</th>
+					<th>Description</th>
+					<th>Price</th>
+					<th>-</th>
+			</tr>
+		</thead>
+		<tbody>
+				<tr *ngFor="let itm of itemsOfCat( cat )" id="{{itm.barcode}}">
+					<td>{{itm.barcode}}</td>
+					<td>{{itm.desc}}</td>
+					<td>{{itm.unit_price}}</td>
+
+					<!-- Edit Button -->
+					<td>
+							<!-- data-toggle="collapse"  aria-controls="#pnlCustomer" href="#pnlCustomer"  -->
+						<a 	class="btn btn-link btn-sm"
+								*ngIf ="loginService.checkUserPermission(Permission.CAN_UPDATE_ITEM)"
+								
+								title="Edit Customer"
+								(click)="toggleEdit(itm); ">
+							<i class="far fa-edit text-info"></i>
+						</a>
+						
+						<!-- Delete Button -->
+						<a class="btn btn-link btn-sm"
+								*ngIf= "loginService.checkUserPermission(Permission.CAN_DELETE_ITEM)"
+								title="Delete Customer"
+								(click)="delete(itm)">
+								<i class="far fa-trash-alt text-danger"></i>
+						</a>
+					</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr >
+					<td colspan="3"> 
+						<b>Total Count: {{ itemsOfCat_count(cat) }} items</b>
+					</td>
+					<td> 
+						<!-- Add Button -->
+						<a class="btn btn-success btn-sm" style="color: white"
+								*ngIf= "loginService.checkUserPermission(Permission.CAN_INSERT_ITEM)"
+								title="Add Item"
+								(click)="toggleInsert(cat)">
+								<i class="fas fa-plus"></i> Add New
+						</a>
+					</td>
+				</tr>
+			</tfoot>
+	</table>
+	<hr style=" background-color: darkgray">
+</div>
+
+<form class="form-inline" #frmItem="ngForm" id="frmItem" hidden >
+		<div class="form-group">
+		<input type="number" class="form-control form-control-sm mr-sm-2" placeholder="Barcode"
+				size="10"
+				[(ngModel)]="selectedItem.barcode" 
+				name="barcode"
+				[disabled]="!isNewRecord()"
+		> 
+		</div>
+		<input type="text" class="form-control form-control-sm mr-sm-2" placeholder="Desctiption"
+				size="30"
+				[(ngModel)]="selectedItem.desc" 
+				name="desc"
+		> 
+		<input type="number" class="form-control form-control-sm mr-sm-2" placeholder="Unit Price"
+				size="5"
+				[(ngModel)]="selectedItem.unit_price" 
+				name="unit_price"
+		>
+
+		<!-- ======== Submit & Clear & Close ========= -->
+		<button  type="submit" class="form-control btn btn-primary btn-sm mr-sm-2"
+						(click) = "onSubmit(frmItem)">
+				<i class="fas fa-share-square"></i> Submit
+		</button>
+		<button  class="btn btn-secondary btn-sm"
+				onclick="document.getElementById('frmItem').reset();">
+				<i class="fas fa-undo-alt"></i> Reset
+		</button>
+		<button type="button" class="close" aria-label="Close"
+					(click)="closeAddEditForm();"	>
+				<span aria-hidden="true"> &times;</span>
+		</button>
+			
+</form>

@@ -1,0 +1,10 @@
+/* You can add global styles to this file, and also import other style files */
+
+.text-button{
+	cursor: pointer;
+}
+
+.form-control.ng-invalid.ng-dirty.ng-touched
+{
+	border: solid 2px red;	
+}

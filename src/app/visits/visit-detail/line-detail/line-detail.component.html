@@ -1,0 +1,109 @@
+<h4>
+  Line-Details: <small>Here is all moves of this line</small>
+</h4>
+
+<table class="table table-sm table-bordered table-hover table-light" #tblLineDetails id="tblLineDetails">
+<thead class="thead-light">
+	<th>Type</th>
+	<th>Count</th>
+	<th>Expired on</th>
+	<th>-</th>
+</thead>
+<tbody>
+	<tr *ngFor="let mov of moves"  id="mv{{mov.id}}">
+		<td>{{mov.type}}</td>
+		<td>{{mov.count}}</td>
+		<td>{{mov.expired_on}}</td>
+		<td>
+				<!-- Edit Button -->
+				<a 	class="btn btn-link btn-sm" style="padding:4px"
+						*ngIf ="loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_VISITS, routedUser)"
+						title="Edit Move"
+						(click)="toggleEdit(mov); ">
+					<i class="far fa-edit text-info"></i>
+				</a>
+				
+				<!-- Delete Button -->
+				<a class="btn btn-link btn-sm" style="padding:4px" 
+						*ngIf= "loginService.checkUserPermission(Permission.CAN_DELETE_VISIT) || 
+										loginService.checkUserPermission(Permission.CAN_DELETE_HIS_VISITS, routedUser)"
+						title="Delete Move"
+						(click)="delete(mov)">
+						<i class="far fa-trash-alt text-danger"></i>
+				</a>
+
+		</td>
+	</tr>
+</tbody>
+<tfoot>
+		<tr>
+			<td colspan="3"></td>
+			<td> 
+				<!-- Add Button -->
+				<a class="btn btn-success btn-sm" style="color: white"
+						*ngIf= "loginService.checkUserPermission(Permission.CAN_INSERT_HIS_VISITS, routedUser) "
+						title="Add Visit"
+						(click)="toggleInsert('tblLineDetails');">
+						<i class="fas fa-plus"></i> Add
+				</a>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+
+<form class="form-inline" #frmMove="ngForm" id="frmMove" hidden >
+	<div class="form-group">
+
+		<input type="hidden" name="visit_id" [(ngModel)]="selectedMove.visit_id" />
+
+		<!-- === Move Type (COUNT | SALE | RETURN) ===== -->
+		<select class="form-control form-control-sm  mr-sm-2"
+			name="type" value="COUNT" #movtype
+			[(ngModel)]="selectedMove.type"
+			(change)="onMoveTypeChange($event.target.value)">
+				<option value="COUNT" selected>Count</option>
+				<option value="SALE" >Sale</option>
+				<option value="RETURN" >Return</option>
+		</select>
+		
+		<input type="number" name="count" class="form-control form-control-sm  mr-sm-2" placeholder="Count" style="width: 5em"
+			[(ngModel)]="selectedMove.count" 
+			#movCount
+			min="0"
+			required/>
+
+		<div class="text-danger" *ngIf="movCount.touched && movCount.invalid">
+				<div *ngIf="movCount.errors.required">requierd!</div>
+				<div *ngIf="movCount.errors.min">must be geater than 0</div>
+		</div>
+
+		<!-- === EXPIERY DATE ===== -->
+		<select class="form-control form-control-sm  mr-sm-2"
+			name="expired_on" #expiredOn			
+			[(ngModel)]="selectedMove.expired_on"
+			[hidden]="!(movtype.value == MoveType.RETURN || movtype.value == MoveType.COUNT)" >
+				<option value="" disabled selected>Expierd On</option>
+				<option *ngFor="let dt of expiryDates">{{ dt.expired_on | date: util.dateFormat}}</option>
+		</select>
+		
+		<input  type="date"  class="form-control form-control-sm  mr-sm-2" placeholder="Eipiered On"
+			name="expired_on" id="expired_on"			
+			[(ngModel)]="selectedMove.expired_on" 
+			[hidden]="!(movtype.value == MoveType.SALE)"
+			/>
+
+	</div>
+
+		<!-- ======== Submit & Clear & Close ========= -->
+		<button  type="submit" class="form-control btn btn-primary btn-sm mr-sm-2"
+						(click) = "onSubmit()">
+				<i class="fas fa-share-square"></i> Submit
+		</button>
+		<button type="button" class="close" aria-label="Close"
+					(click)="closeAddEditForm();"	>
+				<span aria-hidden="true"> &times;</span>
+		</button>
+			
+</form>
+	

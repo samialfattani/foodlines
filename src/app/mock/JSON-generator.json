@@ -1,0 +1,64 @@
+
+/* https://www.json-generator.com/# */
+
+/* generate 10 Customers */
+[
+  '{{repeat(10)}}',
+	{
+		_id: '{{objectId()}}',
+		name:'{{company()}}', 
+		address: {lat:'{{floating(21.700001, 21.25)}}', 
+								lng:'{{floating(39.150001, 39.3)}}'}, 
+		contact: [
+			'{{repeat(1,3)}}',
+			{name: '{{surname()}}', 
+					lst: [ '+966{{phone()}}', '{{email()}}' ]
+					}
+		]
+	}
+]
+
+
+https://www.json-generator.com/#
+
+/* generate 10 Items */
+[
+  '{{repeat(10)}}',
+	{
+		_id: '{{objectId()}}',
+		
+		barcode: '{{integer(556600, 556699)}}',
+		unitPrice: '{{integer(1, 20)}}',
+		desc: '{{lorem(1, "words")}}',
+		category: '{{random("TAM_TAM", "BLONZY_CHIPS", "BLONZY_OTHER")}}'
+	}
+]
+
+//Categories
+[
+{name: 'TAM_TAM', type:'item'},
+{name: 'BLONZY_CHIPS', type:'item'},
+{name: 'BLONZY_OTHER', type:'item'},
+]
+
+//visits
+[
+    '{{repeat(5, 10)}}', {
+      customer_id: '5ab916be59377f5bae72f4b5',
+      date: '{{new Date(2018, 1, 1)}}',
+      track: '{{lorem(1, "words")}}',      
+      totalSales: '{{0}}',
+      summery: '{{lorem(5, "words")}}',
+      nextVisit: '{{date(new Date(2018, 1, 1), new Date(2018, 6, 30))}}',
+      moves: [
+        '{{repeat(3,6)}}', {
+          type: '{{random("COUNING", "SILLING", "WASTING")}}',
+          item_id: '{{random("5ab678bdbc1807bec841dda3", "5ab678bddbce6bdfaa96b39d", "5ab678bd1ebe8f3d65759742")}}',
+          expiredOn: '{{new Date(2019, 1, 1)}}',
+          count: '{{integer(5, 40)}}'
+          
+        }
+      ]
+      
+    }
+]

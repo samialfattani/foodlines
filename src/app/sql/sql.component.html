@@ -1,0 +1,88 @@
+<p>
+	sql works!
+	
+</p>
+
+<div *ngIf="loginService.checkUserPermission(Permission.SQL); then sqlTemplate" >
+
+</div>
+
+<ng-template #sqlTemplate>
+
+	<h5>Tables:</h5>
+	<div >
+		<span *ngFor="let t of tables"
+				class="badge badge-pill badge-primary text-button mx-1" 
+				style="font-size: 14px"
+				(click)="writeSelect(t.table_name)"> 
+				{{t.table_name}} 
+		</span>
+	</div>
+
+	<h5>Views:</h5>
+	<div >
+		<span *ngFor="let t of views"
+				class="badge badge-pill badge-primary text-button mx-1" 
+				style="font-size: 14px"
+				(click)="writeSelect(t.table_name)"> 
+				{{t.table_name}} 
+		</span>
+	</div>	
+	<hr>
+
+	<form action="" class="form"  #frmSQL="ngForm" >
+
+		<textarea rows="6" class="form-control" style="font-family: consolas; font-size: 16px"
+			id = "txtquery"
+			placeholder="Write any SQL here..."
+			[(ngModel)] = "Current_Query"
+			#query
+			name="query">
+		</textarea>
+
+		<div class="form-row">
+			<div class="col-8">
+				<button  type="submit" class="form-control btn btn-primary btn-sm"
+									(click) = "onSubmit(frmSQL)">
+						<i class="fas fa-share-square"></i> Submit
+				</button>
+			</div>
+	
+			<div class="col-3">
+					<button  class="btn btn-secondary btn-block btn-sm"
+					onclick="document.getElementById('sqlTemplate').reset();">
+						<i class="fas fa-undo-alt"></i> Reset
+					</button>
+			</div>
+				
+		</div>
+
+	</form>
+</ng-template>				
+
+
+<div class="responsive-table" *ngIf="jsonAsHTML" [innerHTML]="jsonAsHTML">
+
+</div>
+
+<!-- table.table.table-sm>(tr>hd)+(tr>td) -->
+<div class="responsive-table" *ngIf="metaData">
+
+	<table class="table table-sm table-bordered table-hover">
+		<thead class="thead-light">
+			<tr>
+				<th *ngFor="let f of metaData.fields">{{f.name}}</th>
+			</tr>
+		</thead>
+		<tr *ngFor="let rec of metaData.rows; let i = index" >
+			<td *ngFor="let k of metaData.fields"
+					[ngSwitch]="k.dataTypeID">
+						<span *ngSwitchCase="PGdataType.DATE">{{rec[k.name] | date:'dd-MM-yyyy'}}</span>
+						<pre *ngSwitchCase="PGdataType.JSON" ><code>{{ jsonPritty( rec[k.name]) }}</code></pre>
+						<pre *ngSwitchCase="PGdataType.LIST_OF_JSON" ><code>{{ jsonPritty( rec[k.name] ) }}</code></pre>
+						<span *ngSwitchDefault>{{rec[k.name]}}</span>
+			</td>
+		</tr>
+	</table>
+
+</div>

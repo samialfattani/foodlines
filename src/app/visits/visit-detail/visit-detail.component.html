@@ -1,0 +1,146 @@
+<p>
+  visit-detail works!
+</p>
+
+
+<div class="container visible-lg visible-xl visible-md">
+
+	<h5>Sales Man: <small>{{visit.user_name}}</small></h5>
+	<h5>Track: <small>{{visit.track}}</small></h5>
+	<h5>Customer: <small>{{visit.customer.name}}</small></h5>
+	<h5>Location: <small>{{visit.customer.address | json}}</small></h5>
+	<h5>Visit Date: <small>{{visit.date}}</small></h5>
+	
+	<ng-template 
+		[ngTemplateOutlet]="vstDetailTable" 
+		[ngTemplateOutletContext]="{ $implicit: visit, index: visit.id }">
+	</ng-template>				
+
+	<h5>Total Sales: <small><b class="text-success">{{visit.total_sales | number:'1.2'}} S.R</b></small></h5>
+	<h5>Visit Summary: <small>{{visit.summary}}</small></h5>
+	<h5>Next Visit: <small>{{visit.nextVisit}}</small></h5>
+</div>
+
+<ng-template #vstDetailTable>
+<table class="table table-sm table-bordered table-hover"  id="tblLines">
+
+	<!-- (thead>tr>th*7)+(tbody>tr>td*7)+(tfoot>tr>td[colspan=6]+td) -->
+	<thead class="thead-light">
+		<tr>
+			<th>Barcode</th>
+			<th>Item</th>
+			<th>Old Stock</th>
+			<th>Count</th>
+			<th>Return</th>
+			<th>Sugg-ested</th>
+			<th>Actual Sale</th>
+			<th>Stock</th>
+			<th>-</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let lin of vstLines" id="{{lin.barcode}}">
+			<td>{{lin.barcode}}</td>
+			<td>{{lin.desc}}</td>
+			<td>{{lin.old_stock}}</td>
+			<td>{{lin.counts}}</td>
+			<td>{{lin.returens}}</td>
+			<td>{{lin.suggested}}</td>
+			<td>{{lin.sales}}</td>
+			<td>{{lin.stock}}<small>&times;{{lin.unit_price}}</small></td>
+			<td style="white-space: nowrap">
+
+				<!-- Details Button -->
+				<a 	class="btn btn-link btn-sm" style="padding:4px"
+					[class.disabled] = "!(	loginService.checkUserPermission(Permission.CAN_READ_HIS_VISITS, routedUser)||
+											loginService.checkUserPermission(Permission.CAN_READ_ALL_VISITS, routedUser))"
+					title="Line Details"
+					(click)="toggleLineDetails(lin); ">
+					<i class="fas fa-angle-double-down text-primary"></i>
+				</a>
+				
+				<!-- Edit Button -->
+				<a 	class="btn btn-link btn-sm" style="padding:4px"
+					[class.disabled] ="!loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_VISITS, routedUser)"
+					title="Edit Line"
+					(click)="toggleEdit(lin); ">
+					<i class="far fa-edit text-info"></i>
+				</a>
+				
+				<!-- Delete Button -->
+				<a class="btn btn-link btn-sm" style="padding:4px" 
+					[class.disabled] ="!loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_VISITS, routedUser)"
+					title="Delete Line"
+					(click)="delete(lin)">
+					<i class="far fa-trash-alt text-danger"></i>
+				</a>
+
+			</td>
+		</tr>
+
+	</tbody>
+
+	<tfoot>
+		<tr>
+			<td colspan="8"><b>count:</b></td>
+			<td> 
+				<!-- Add Button -->
+				<a class="btn btn-success btn-sm" style="color: white"
+					[class.disabled] ="!loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_VISITS, routedUser)"
+					title="Add Line"
+					(click)="toggleInsert('tblLines');">
+					<i class="fas fa-plus"></i> Add
+				</a>
+			</td>			
+		</tr>
+	</tfoot>
+</table>
+</ng-template>
+
+<div id="divLineDetails" >
+	<router-outlet></router-outlet>	
+</div>
+
+
+<form class="form-inline" #frmLine="ngForm" id="frmLine" hidden >
+	<div class="form-group">
+
+		<input type="hidden" name="visit_id" [(ngModel)]="selectedLine.visit_id" />
+
+		<!-- === ITEMS === --> 
+		<select class="form-control form-control-sm  mr-sm-2"
+			name="type" value=""
+			[(ngModel)]="selectedLine.barcode">
+				<option value="" disabled selected>Items List...</option>
+				<optgroup *ngFor="let cat of categories" label="{{cat}}">
+					<option *ngFor="let itm of itemsOfCat(cat)" value="{{itm.barcode}}" >{{itm.barcode + ' - ' + itm.desc}}</option>
+				</optgroup>
+		</select>
+		<i class="fas fa-barcode mr-sm-2"></i>
+
+		<input type="number" name="unit_price" class="form-control form-control-sm  mr-sm-2" placeholder="price" style="width: 5em"
+			[(ngModel)]="selectedLine.unit_price"
+			#movCount
+			min="0"
+			required/>
+
+		<div class="text-danger" *ngIf="movCount.touched && movCount.invalid">
+				<div *ngIf="movCount.errors.required">requierd!</div>
+				<div *ngIf="movCount.errors.min">must be geater than 0</div>
+		</div>
+
+
+	</div>
+
+		<!-- ======== Submit & Clear & Close ========= -->
+		<button  type="submit" class="form-control btn btn-primary btn-sm mr-sm-2"
+						(click) = "onSubmit()">
+				<i class="fas fa-share-square"></i> Submit
+		</button>
+		<button type="button" class="close" aria-label="Close"
+					(click)="closeAddEditForm();"	>
+				<span aria-hidden="true"> &times;</span>
+		</button>
+			
+</form>
+	

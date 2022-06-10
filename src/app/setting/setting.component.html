@@ -1,0 +1,63 @@
+<p>
+  setting works!
+</p>
+
+<!-- ===== LAYOUT ========= -->
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-xs-12">
+
+				<div *ngIf="true; then ItemCategories" ></div>
+
+		</div>
+	</div>
+</div>
+
+<ng-template #ItemCategories >
+
+	<b>Item Categories:</b> <br/>
+
+	<ul class="list-group">
+			<li class="list-group-item d-flex justify-content-between align-items-center"
+					*ngFor="let c of itemCategories">
+					{{c.name}} 				
+
+				<!-- === delete button === -->
+				<span class="badge badge-danger badge-pill text-button"
+							(click)="deleteCategory(c)">
+								<i class="fas fa-trash-alt"></i>
+				</span>
+			</li>
+	</ul>
+
+	<form #frmCategory="ngForm" (submit)="addCatgory(frmCategory)">
+	
+		<div class="form-row">
+			<div class="col-10">
+				<input class="form-control" type="text"  placeholder="New item category name"
+					ngModel
+					name="name"
+					#catName="ngModel"
+					id="catName"
+					required />
+			</div>
+			<div class="col-2">
+				<!-- == submit == -->
+				<button type="submit" class="btn btn-success btn-sm"
+						[disabled]="!frmCategory.valid" 
+				>
+				<i class="fas fa-plus"></i> Add 
+				</button>
+			</div>
+		</div>
+
+		<div class="text-danger" *ngIf="catName.touched && catName.invalid">
+			<div *ngIf="catName.errors.required">requierd</div>
+		</div>
+
+		<input type="hidden" name="type" [ngModel]="'item'" value="item" />
+
+	</form>
+
+
+</ng-template>

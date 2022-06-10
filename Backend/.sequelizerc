@@ -1,0 +1,8 @@
+var path = require('path');
+
+module.exports = {
+  'config': path.resolve('./', 'pg/config/config.json'),
+  'migrations-path': path.resolve('./', 'pg/migrations'),
+  'seeders-path': path.resolve('./', 'pg/seeders'),
+  'models-path': path.resolve('./', 'pg/models')
+};

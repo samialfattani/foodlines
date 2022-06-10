@@ -1,0 +1,90 @@
+<p>
+  profile works!
+</p>
+
+<b> 
+	<h2>{{user.name}}</h2> 
+</b>
+
+<div style="columns: 150px 6;">
+	<span class="badge badge-success" 
+			style="margin-left: 10px; " 
+			*ngFor="let p of getPermissions() ">
+			{{p.toLowerCase() }}
+	</span>
+</div>
+
+<br><br>
+
+<div class="container" style="background-color: lightsteelblue"
+		*ngIf= "loginService.checkUserPermission(Permission.CAN_UPDATE_ANY_USER) || 
+		loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_PROFILE, routedUser)"
+>
+	<div class="panel-heading">
+			<h3>Change Password</h3>
+	</div>
+	
+	<!-- ================== change Password ==================== -->
+	<div class="panel-body">
+		<form id='frmUser' #frmPassword="ngForm"  >
+			<div class="form-group">	
+					<input type="password" class="form-control form-control-sm" placeholder="Current Password"
+						ngModel
+						name="pw"
+						#pw="ngModel"
+						required
+					>
+					<div class="text-danger" *ngIf="pw.touched && pw.invalid">
+							<div *ngIf="pw.errors.required">requierd!</div>
+					</div>
+			</div>
+
+			<div class="form-group">	
+					<!-- ==== New Password === -->
+					<input type="password" class="form-control form-control-sm" placeholder="New Password"
+						ngModel 
+						name="newPass1"
+						#newPass1="ngModel"
+						required
+					>
+					<div class="text-danger" *ngIf="newPass1.touched && newPass1.invalid">
+							<div *ngIf="newPass1.errors.required">requierd!</div>
+					</div>
+						
+			</div>
+
+			<div class="form-group">	
+					<!-- ==== New Password Again === -->
+					<input type="password" class="form-control form-control-sm" placeholder="New Password Again"
+							ngModel 
+							name="newPass2"
+							#newPass2="ngModel"
+							required
+							pattern="^{{newPass1.value}}$" 
+					>
+					<div class="text-danger" *ngIf="newPass2.touched && newPass2.invalid">
+							<div *ngIf="newPass2.errors.required">requierd!</div>
+							<div *ngIf="newPass2.errors.pattern">password dosen't match</div>
+					</div>
+			</div>
+
+			<!-- ======== Submit & Clear ========= -->
+			<div class="form-row">
+				<div class="col-9">
+					<button  type="submit" class="form-control btn btn-primary btn-sm"
+										(click) = "SubmitForChangingPass(frmPassword)">
+							<i class="fas fa-share-square"></i> Submit
+					</button>
+				</div>
+
+				<div class="col-3">
+					<button  class="btn btn-secondary btn-block btn-sm"
+								onclick="document.getElementById('frmPassword').reset();">
+						<i class="fas fa-undo-alt"></i> Reset
+					</button>
+				</div>
+			</div>
+				<br>
+		</form>
+	</div>
+</div>

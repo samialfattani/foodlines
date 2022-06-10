@@ -1,0 +1,77 @@
+
+<!--The content below is only a placeholder and can be replaced.-->
+<div style="text-align:center">
+	<h1>Welcome to {{ title + apikey}}!</h1>
+	<img width="30" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+
+	<a routerLink="dashboard" *ngIf="loginService.isUserLoggedIn">
+		<span class="badge badge-info" >{{'Hello ' + loginService.user.name.toUpperCase()}}</span>
+	</a>
+	<span class="badge badge-info" *ngIf="loginService.isUserLoggedIn==false">Logged off</span>
+</div>
+
+
+<!-- ======================== Menus ================== -->
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+	<a class="navbar-brand" href="home"><img src="favicon.ico"></a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
+
+	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<ul class="nav nav-pills">
+			<li class="nav-item" >
+				<a class="nav-link "  routerLinkActive="active" routerLink="/login" >Login</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" routerLinkActive="active" routerLink="/about" >About</a>
+			</li>
+			<!--  -->
+			<li class="nav-item"
+					*ngIf="loginService.checkUserPermission(Permission.CAN_READ_HIS_PROFILE)">
+					<a class="nav-link" routerLinkActive="active" 
+						[routerLink]="['/users', loginService.user.name]" 
+						[routerLinkActiveOptions]="{exact:true}">MyProfile</a>
+			</li>
+			
+			<li class="nav-item"
+					*ngIf="loginService.isUserLoggedIn">
+				<a class="nav-link" routerLinkActive="active" routerLink="/dashboard" >Dashboard</a>
+			</li>
+			<li class="nav-item"
+					*ngIf="loginService.checkUserPermission(Permission.CAN_READ_ALL_VISITS) || 
+								 loginService.checkUserPermission(Permission.CAN_READ_HIS_VISITS, routedUser)">
+				<a class="nav-link" routerLinkActive="active" 
+					[routerLink]="['/users', loginService.user.name, 'visits']" >Visits</a>
+			</li>
+
+			<li class="nav-item dropdown" >
+				<a class="nav-link dropdown-toggle" href="#" id="ddAdministration" role="button" 
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Administration
+				</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" routerLinkActive="active" routerLink="/items"
+						*ngIf="loginService.checkUserPermission(Permission.CAN_READ_ALL_ITEMS)">Items</a>
+					<a class="dropdown-item" routerLinkActive="active" routerLink="/users" 
+						[routerLinkActiveOptions]="{exact:true}"
+						*ngIf="loginService.checkUserPermission(Permission.CAN_READ_ALL_USERS)">Users</a>
+					<a class="dropdown-item" routerLinkActive="active" routerLink="/customers"
+						*ngIf="loginService.checkUserPermission(Permission.CAN_READ_ALL_CUSTOMERS)">Customers</a>
+					<a class="dropdown-item" routerLinkActive="active" routerLink="/setting"
+						*ngIf="loginService.checkUserPermission(Permission.SETTING_ADMINISTRATION)">Settings</a>
+					<a class="dropdown-item" routerLinkActive="active" routerLink="/sql"
+						*ngIf="loginService.checkUserPermission(Permission.SQL)">SQL</a>						
+				</div>
+			</li>
+		</ul>
+		
+
+	</div>
+</nav>
+	
+
+
+<div style="margin: 5px">
+		<router-outlet></router-outlet>
+</div>

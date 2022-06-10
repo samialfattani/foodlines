@@ -1,0 +1,27 @@
+{
+  "development": {    
+    "_comment": "FoodLines Production",
+    "username": "qwuwjgeu",
+    "password": "iOxCHkWjMAfctkDi_N8N9V9CxB66DC8H",
+    "database": "qwuwjgeu",
+    "host": "horton.elephantsql.com",
+    "dialect": "postgres"
+    
+  },
+  "test": {
+    "_comment": "",
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "_comment": "FoodLines Dev",
+    "username": "stovsnla",
+    "password": "jE1vO3y3cCVqKrKcBOOqy98i4KW6aWfL",
+    "database": "stovsnla",
+    "host": "stampy.db.elephantsql.com",
+    "dialect": "postgres"
+  }
+}

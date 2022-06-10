@@ -1,0 +1,131 @@
+
+
+<h2>login-form works!</h2>  
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-xs-12">
+
+			<ul class="nav nav-tabs" style="background-color: rgb(183, 216, 243)">
+				<li class="nav-item " >
+					<a class="nav-link" [class.active]="isLogin()==true" (click)="activeForm = 'login'">Log-in</a>
+				</li>
+				<li  class="nav-item" >
+					<a class="nav-link" [class.active]="isRegister()==true" (click)="activeForm = 'register'"
+							onclick="$('#myCaptcha_copy').html = $('#myCaptcha').html">Register </a>
+				</li>
+			</ul>
+
+			<div *ngIf="activeForm=='login'; then loginTemplate else signupTemplate" ></div>
+
+		</div>
+	</div>
+</div>
+
+<!-- ============= Login Form =============== -->
+<ng-template #loginTemplate >
+<form (submit)="loginUser(frmLogin)" #frmLogin="ngForm">
+  <div class="form-group">
+    <label for="txtUserName">Email address or User name</label>
+    <input type="text" class="form-control" id="txtUserName" name="name" ngModel placeholder="Enter email or user">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="txtPw">Password</label>
+		<input type="password" class="form-control" id="txtPw" name="pw"  ngModel placeholder="Password">
+  </div>
+  <div class="form-group form-check">
+    <input type="checkbox" class="form-check-input" id="chkRememberMe">
+    <label class="form-check-label" for="chkRememberMe">Check me out</label>
+	</div>
+
+	<div class="form-group">
+		<input type="submit" class="btn btn-primary"	value="Log-in"
+			id="btnSubmit" />
+
+	</div>
+
+</form>
+</ng-template>
+
+<!-- Register Form -->
+<!-- I have implemented all needed Data Validation and Error Messages -->
+<ng-template #signupTemplate >
+
+<form #signupForm="ngForm"  (submit)="RegisterUser(signupForm)">
+
+		<!-- [ngClass]=" 'form-group ' + regUserName.invalid? 'has-danger': '' " -->
+		<div class="form-group" >
+			<label for="regUserName" >User Name:</label>
+			<input type="text" class="form-control" placeholder="User Name"					
+					ngModel
+					#frmLogin="ngModel"
+					name="name"
+					#regUserName="ngModel"
+					id="regUserName"
+					required
+					minlength="4"
+					pattern="^[a-zA-z][\w-]+"
+			>
+			<div class="text-danger" *ngIf="regUserName.touched && regUserName.invalid">
+				<div *ngIf="regUserName.errors.required">requierd</div>
+				<div *ngIf="regUserName.errors.minlength">at least {{regUserName.errors.minlength.requiredLength}} letters</div>
+				<div *ngIf="regUserName.errors.pattern">Must starts with a letter, consists of letters, numbers, and [-, _ ] </div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="regEmail">Email address</label>
+			<input type="email" class="form-control" id="regEmail" placeholder="name@example.com"
+				ngModel 
+				name="email"
+				#regEmail="ngModel"
+				required
+				pattern="^\w([\w%+-]*\.?)*@([\w-]+\.){1,60}[a-zA-Z]+"
+			>
+			<div class="text-danger" *ngIf="regEmail.touched && regEmail.invalid">
+					<div *ngIf="regEmail.errors.required">requierd!</div>
+					<div *ngIf="regEmail.errors.pattern">wrong email !!</div>
+			</div>
+			</div>
+
+		<div class="form-group">
+			<label for="regPassword">Password</label>
+			<input type="password" class="form-control" id="regPassword" 
+				ngModel 
+				name="pw"
+				#regPassword="ngModel"
+				required
+			>
+			<div class="text-danger" *ngIf="regPassword.touched && regPassword.invalid">
+					<div *ngIf="regPassword.errors.required">requierd!</div>
+			</div>
+			</div>
+
+		<div class="form-group">
+			<label for="regRePassword">Re-enter the password</label>
+			<input type="password" class="form-control" id="regRePassword" 
+				ngModel 
+				name="repw"
+				#regRePassword="ngModel"
+				required
+				pattern="^{{regPassword.value}}$" 
+				onfocus="onloadCallback();"
+			>
+			<div class="text-danger" *ngIf="regRePassword.touched && regRePassword.invalid">
+					<div *ngIf="regRePassword.errors.required">requierd!</div>
+					<div *ngIf="regRePassword.errors.pattern">password dosen't match</div>
+			</div>
+		</div>
+
+		<div id="myCaptcha"	></div>
+
+		<button type="submit" class="btn btn-primary" [disabled]="!signupForm.valid">
+			Submit
+		</button>
+
+		
+		<br/><br/>
+		<br/><br/>
+
+</form>
+</ng-template>

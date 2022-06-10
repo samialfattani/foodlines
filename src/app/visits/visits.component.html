@@ -1,0 +1,132 @@
+<p>
+  visits works!
+</p>
+<div
+		*ngIf="loginService.checkUserPermission(Permission.CAN_READ_HIS_VISITS, routedUser) ||
+					loginService.checkUserPermission(Permission.CAN_READ_ALL_VISITS)	; 
+					then divVisitTemplate">	
+</div>
+
+
+<b> 
+		<h2>{{routedUser}}</h2> 
+</b>
+	
+<ng-template  #divVisitTemplate>
+
+	<div *ngFor="let visitGroup of filteredVisitsByDate">
+	<form class="form-inline" #frmDate="ngForm">
+		<h6>
+			{{visitGroup.title}}: <span *ngIf="visitGroup.date!='*'">{{visitGroup.date | date: util.dateFormat}}</span>
+			<!-- <div class="form-group mb-2"> -->
+			<input type="date" 
+					class="form-control " id="somdayDate" value="visitGroup.date"
+					[(ngModel)]="visitGroup.date"  name="somdayDate"
+					*ngIf="filteredVisitsByDate[2] == visitGroup">
+			<!-- </div> -->
+		</h6>		
+	</form>
+	
+	<table class="table table-sm table-light table-hover" id="{{visitGroup.id}}">
+		<thead class="thead-light">
+			<tr>
+				<th>V_id</th>
+				<th>Customer</th>
+				<th>Date</th>
+				<th>Track</th>
+				<th>Sales</th>
+				<th>Next Visit</th>
+				<th>-</th>
+			</tr>
+		</thead>
+
+		<tr *ngFor="let vst of visitGroup.visits" id="{{vst.id}}">
+			<td>{{ vst.id }}</td>
+			<td>
+				<a routerLink="/users/{{this.routedUser}}/visits/{{vst.id}}">{{vst.customer.name}}</a>
+			</td>
+			<td>{{vst.date | date: util.dateFormat }}</td>
+			<td>{{vst.track }}</td>
+			<td>{{vst.total_sales}}</td>
+			<td>{{vst.nextVisit | date: util.dateFormat}}</td>
+			<td>
+				<!-- Edit Button -->
+				<a 	class="btn btn-link btn-sm"
+						*ngIf ="loginService.checkUserPermission(Permission.CAN_UPDATE_HIS_VISITS, routedUser)"
+						
+						title="Edit Visit"
+						(click)="toggleEdit(vst); ">
+					<i class="far fa-edit text-info"></i>
+				</a>
+				
+				<!-- Delete Button -->
+				<a class="btn btn-link btn-sm"
+						*ngIf= "loginService.checkUserPermission(Permission.CAN_DELETE_VISIT) || 
+										loginService.checkUserPermission(Permission.CAN_DELETE_HIS_VISITS, routedUser)"
+						title="Delete Visit"
+						(click)="delete(vst)">
+						<i class="far fa-trash-alt text-danger"></i>
+				</a>				
+			</td>
+		</tr>
+
+		<tfoot>			
+			<tr >
+				<td colspan="6"> 
+					<b>Total Count: {{ visitGroup.visits.length }} visits</b>
+				</td>
+				<td> 
+					<!-- Add Button -->
+					<a class="btn btn-success btn-sm" style="color: white"
+							*ngIf= "loginService.checkUserPermission(Permission.CAN_INSERT_HIS_VISITS, routedUser) "
+							title="Add Visit"
+							(click)="toggleInsert(visitGroup.id);">
+							<i class="fas fa-plus"></i> Add New
+					</a>
+				</td>
+			</tr>
+		</tfoot>
+
+	</table>
+	<br><br><br>
+	<hr>
+
+</div>
+</ng-template>
+
+
+<form class="form-inline" #frmVisit="ngForm" id="frmVisit" hidden >
+	<div class="form-group">
+
+		<input type="hidden" name="user_name" [(ngModel)]="selectedVisit.user_name" />
+		<input type="date" name="date" [(ngModel)]="selectedVisit.date" 
+		[hidden]=" util.isDate(selectedVisit.date) " />
+		
+		<select class="form-control form-control-sm  mr-sm-2"
+			name="customer_id" value=""
+			[(ngModel)]="selectedVisit.customer_id">
+				<option value="" disabled selected>Customer</option>
+				<option *ngFor="let c of customerList" 
+					value="{{c.id}}"
+					>{{c.name}}</option>
+		</select>		
+		<input type="text"  class="form-control form-control-sm  mr-sm-2" placeholder="track..." 
+						name="track" [(ngModel)]="selectedVisit.track"/>
+	</div>
+
+		<!-- ======== Submit & Clear & Close ========= -->
+		<button  type="submit" class="form-control btn btn-primary btn-sm mr-sm-2"
+						(click) = "onSubmit()">
+				<i class="fas fa-share-square"></i> Submit
+		</button>
+		<!-- <button  class="btn btn-secondary btn-sm"
+				onclick="document.getElementById('frmVisit').reset();">
+				<i class="fas fa-undo-alt"></i> Reset
+		</button> -->
+		<button type="button" class="close" aria-label="Close"
+					(click)="closeAddEditForm();"	>
+				<span aria-hidden="true"> &times;</span>
+		</button>
+			
+</form>
+	

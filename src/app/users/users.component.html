@@ -1,0 +1,97 @@
+<p>
+  user works!
+</p>
+
+<h3>{{title}}</h3>
+<div class="form-inline">
+	Search: <input type="text" class="form-control"  [(ngModel)]="search" (keypress)="searchNow()">
+</div>
+<table class="table table-hover ">
+	<thead class="thead-light">
+		<th>Name</th>
+		<th>Password</th>
+		<th>Daily Target</th>
+		<th>Monthly Target</th>
+		<th>Visits</th>		
+		<th>Persmissions</th>
+	</thead>
+
+	<tbody>
+	<tr *ngFor="let usr of users; let i = index">
+		<td> 
+			<a routerLink="/users/{{usr.name}}">{{usr.name}}</a>
+		</td>
+		<td>{{usr.pw}}</td>
+		<td>{{usr.daily_target | number:'1.0'}}</td>
+		<td>{{usr.monthly_target | number:'1.0'}}</td>
+		<td><a routerLink="/users/{{usr.name}}/visits"><i class="far fa-handshake"></i></a></td>
+		<td>
+				<ng-template 
+					[ngTemplateOutlet]="getTemplate(usr)" 
+					[ngTemplateOutletContext]="{ $implicit: usr, index: usr.name }"
+				>
+				</ng-template>
+		</td>
+
+	</tr>
+	</tbody>
+</table>
+
+<!-- =========== Permission Control ========= -->
+
+<ng-template #ShowPermissions let-usr>
+		{{usr.getPermissionsAsText() }}
+		<span 		
+			class="badge badge-pill badge-primary text-button" 
+			*ngIf="loginService.user.isHasPermission( Permission.CAN_UPDATE_PERMISSIONS_ANY_USER )"
+			(click)="edit_click(usr)"
+		>
+			Edit...
+		</span>
+</ng-template>
+
+<!-- <ng-template #UpdatePermissions let-idx="index"> -->
+<ng-template #UpdatePermissions let-usr>
+<form class="form-horizontal" action="">
+<table>
+	<thead>
+		<th>Allow</th>
+		<th></th>
+		<th>Deny</th>
+	</thead>
+	<tbody>
+	<tr>
+		<td> 
+				<select 
+					class="form-control" name="lstAllow" id="lstAllow" 
+					multiple [(ngModel)]="selectedPermissions"> <!-- <== changed -->
+					<option 
+						*ngFor="let p of selected.permissions" 
+						[ngValue]="p">{{ Permission[p].toLowerCase() }}</option> 
+					<!-- p -->
+				</select>
+			
+		</td>
+		<td style="padding: 0px; text-align: center; vertical-align: center;">
+			<span class="badge badge-pill badge-primary text-button" (click)="rejectSelected()">></span><br>
+			<span class="badge badge-pill badge-primary text-button" (click)="allowSelected()"><</span>
+		</td>
+		<td> 
+			<select 
+				class="form-control" name="lstDeny" id="lstDeny"
+				multiple [(ngModel)]="selectedPermissions"> 
+			<option 
+				*ngFor="let p of selected.getNotPermissions() " 
+				[ngValue]="p">{{ Permission[p].toLowerCase() }}</option> 
+
+			</select>
+</td>
+	</tr>
+	</tbody>
+</table>
+
+<button class="button button-primary"
+			(click)="savePermissions(usr)">Save</button>
+
+</form>
+</ng-template>
